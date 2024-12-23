@@ -6,131 +6,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webpage Quality Checker</title>
     <style>
+        /* Global Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #eaeaea;
+            color: #444;
         }
 
         header {
-            background-color: #333;
-            color: #fff;
-            padding: 20px;
+            background-color: #1f2937;
+            color: #f8fafc;
+            padding: 30px;
             text-align: center;
+            border-bottom: 2px solid #333;
         }
 
         header h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 2rem;
+            font-weight: 600;
         }
 
         header p {
             margin: 5px 0;
-            font-size: 14px;
+            font-size: 1rem;
         }
 
         main {
-            margin: 20px auto;
-            max-width: 900px;
-            padding: 20px;
+            margin: 30px auto;
+            max-width: 1100px;
+            padding: 25px;
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
 
+        /* Form Styles */
         form {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         input[type="text"] {
-            flex: 1;
-            max-width: 600px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
+            width: 80%;
+            max-width: 500px;
+            padding: 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4ade80;
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
             color: #fff;
-            background: #007BFF;
+            background: #4ade80;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.3s ease;
         }
 
         button:hover {
-            background: #0056b3;
+            background: #34d399;
         }
 
+        p {
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* Results Section */
         .results {
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .results h2 {
-            border-bottom: 2px solid #007BFF;
-            padding-bottom: 5px;
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: #333;
+            border-bottom: 3px solid #4ade80;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
+        /* Section Styling */
         .section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: #f9f9f9;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
 
         .section strong {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
             display: block;
-            margin-bottom: 10px;
-            font-size: 16px;
         }
 
         .subsection {
-            margin-top: 10px;
+            margin-top: 15px;
             padding-left: 20px;
+            list-style-type: none;
         }
 
         .subsection ul {
-            margin: 10px 0;
+            list-style-type: none;
             padding-left: 20px;
-            list-style-type: disc;
         }
 
+        /* Error Styles */
         .error {
-            color: #d9534f;
+            color: #f43f5e;
             font-weight: bold;
         }
 
+        .error-message {
+            font-size: 1.1rem;
+            color: #f43f5e;
+        }
+
+        /* Links */
         a {
             text-decoration: none;
-            color: #007BFF;
+            color: #4ade80;
         }
 
         a:hover {
             text-decoration: underline;
         }
 
+        /* Toggle Details */
         .audit-list {
+            list-style-type: none;
             display: none;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .toggle-details {
-            color: #007BFF;
+            color: #4ade80;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 1rem;
             border: none;
             background: none;
         }
@@ -139,6 +169,7 @@
             text-decoration: underline;
         }
 
+        /* Loading Spinner */
         .loading-spinner {
             display: none;
             position: absolute;
@@ -146,7 +177,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #007BFF;
+            border-top: 4px solid #4ade80;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -163,70 +194,181 @@
             }
         }
 
+        /* Log Message */
         .log-message {
-            font-size: 14px;
-            margin-top: 10px;
+            font-size: 1rem;
+            margin-top: 15px;
             color: #333;
         }
 
+        /* Total Error Summary */
         .total-error-summary {
-            font-size: 18px;
-            color: #d9534f;
+            font-size: 1.3rem;
+            color: #f43f5e;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
+        /* File Section */
         .file-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: #f9f9f9;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
         }
 
         .file-section h3 {
-            margin: 0 0 10px;
-            font-size: 18px;
+            margin: 0 0 15px;
+            font-size: 1.3rem;
             color: #333;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 2px solid #d1d5db;
             padding-bottom: 5px;
         }
 
         .error-list {
+            list-style-type: none;
             padding-left: 20px;
-            list-style-type: disc;
             margin: 0;
         }
 
         .error-item {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #f5c2c2;
-            border-radius: 4px;
-            background: #ffe6e6;
-        }
-
-        .error-message {
-            font-size: 16px;
-            font-weight: bold;
-            color: #d9534f;
-        }
-
-        .error-description {
-            display: block;
-            font-size: 14px;
-            margin-top: 5px;
-            color: #555;
+            margin-bottom: 15px;
+            padding: 12px;
+            border: 2px solid #fef2f2;
+            border-radius: 6px;
+            background: #ffe4e6;
         }
 
         .error-count {
             display: block;
-            margin-top: 5px;
-            font-size: 14px;
+            margin-top: 10px;
+            font-size: 1rem;
             color: #333;
             font-weight: bold;
         }
+
+        .audit-item {
+            padding: 20px;
+            background-color: #f9fafb;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+
+        .audit-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .audit-description {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .audit-displayValue,
+        .audit-numericValue {
+            font-size: 1.1rem;
+            color: #4ade80;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        .metric-savings {
+            margin-top: 1.5rem;
+        }
+
+        .metric-savings-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .metric-savings-item {
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #f43f5e;
+        }
+
+        .metric-savings strong {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Content Analysis Section */
+        .content-analysis-section {
+            background-color: #f8fafb;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 3rem;
+        }
+
+        .content-summary {
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .content-analysis-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 1.5rem;
+        }
+
+        .content-analysis-item {
+            padding: 20px;
+            background-color: #f9fafb;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+        .content-analysis-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .content-analysis-value {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+
+        /* Dead Links Section */
+        .dead-links-section {
+            background-color: #f8fafb;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 3rem;
+        }
+
+        .dead-link-count {
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .dead-link-count span {
+            color: #f43f5e;
+            font-weight: 700;
+        }
+
 
         .loading-metrics {
             margin: 20px 0;
@@ -298,70 +440,13 @@
         .distribution-table td {
             background-color: #fff;
         }
-
-        .audit-item {
-            padding: 1rem;
-            background-color: #f9f9f9;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            font-family: Arial, sans-serif;
-        }
-
-        .audit-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .audit-description {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 0.5rem;
-        }
-
-        .audit-displayValue,
-        .audit-numericValue {
-            font-size: 1rem;
-            color: #0077cc;
-            font-weight: 500;
-            margin-right: 0.5rem;
-        }
-
-        .metric-savings {
-            margin-top: 1rem;
-        }
-
-        .metric-savings-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .metric-savings-item {
-            font-size: 0.9rem;
-            color: #444;
-            margin-bottom: 0.3rem;
-        }
-
-        .metric-value {
-            font-weight: bold;
-            color: #d9534f;
-        }
-
-        .metric-savings strong {
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
     </style>
 </head>
 
 <body>
     <header>
         <h1>Webpage Quality Checker</h1>
-        <p>Enter a URL to analyze its quality and get feedback.</p>
+        <p style="color: #f8fafc;">Enter a URL to analyze its quality and get feedback.</p>
     </header>
     <main>
         <form method="POST" action="/analyze" id="analyzeForm">
@@ -369,7 +454,13 @@
                 required>
 
             <button type="submit">Analyze</button>
+            {% if error %}
+                <p class="error-message">{{error}}</p>
+            {% endif %}
         </form>
+
+
+
 
         <div class="loading-spinner" id="loadingSpinner"></div>
 
@@ -377,9 +468,9 @@
 
         <div class="results" id="resultsSection">
             {% if data %}
-            <h2>Quality Assurance Report</h2>
+            <h1>Quality Assurance Report</h1>
             <section class="section">
-                <h2>Loading Performance Metrics</h2>
+                <h2>Loading Experience Metrics</h2>
                 <div class="loading-metrics">
                     {% for metric, details in data.loading_section.items() %}
                     <div class="metric-item">
@@ -420,7 +511,7 @@
             <h2>{{ section.title }}</h2>
             <section class="section">
                 <section class="subsection">
-                    <strong>Section Summary:</strong>
+                    <strong>Summary:</strong>
                     <p>{{ section.summary }}</p>
                 </section>
 
@@ -432,7 +523,7 @@
                     {% else %}
                     <ul class="subsection">
                         {% for audit in section.audits %}
-                        <li class="audit-item">
+                        <li class="audit-item audit-{{ audit.class }}">
                             <strong class="audit-title">{{ audit.title }}:</strong>
                             {% if audit.description %}
                             <p class="audit-description">{{ audit.description }}</p>
@@ -477,7 +568,7 @@
             <h2>HTML Validation</h2>
             <section class="section">
                 <section class="subsection">
-                    <strong>Validation Summary:</strong>
+                    <strong>Summary:</strong>
                     <p>{{ data.html_section.summary }}</p>
                 </section>
                 <button class="toggle-details" onclick="toggleDetails(this)">Click for technical details</button>
@@ -487,7 +578,7 @@
                     {% if data.html_section.errors is string %}
                     <p>{{ data.html_section.errors }}</p>
                     {% else %}
-                    <h3>Errors:</h3>
+                    <h3 class="error-message">Errors:</h3>
                     <ul class="error-list">
                         {% for error in data.html_section.errors %}
                         <li class="error-item">
@@ -504,7 +595,7 @@
             <h2>CSS Validation</h2>
             <section class="section">
                 <section class="subsection">
-                    <strong>Section Summary:</strong>
+                    <strong>Summary:</strong>
                     <p>{{ data.css_section.summary }}</p>
                 </section>
 
@@ -540,6 +631,47 @@
                     {% endif %}
                 </div>
             </section>
+            <h2>Content Analysis</h2>
+            <section class="section content-analysis-section">
+                <section class="subsection">
+                    <strong>Content Summary:</strong>
+                    {% if data.content_analysis.Summary %}
+                    <p class="content-summary">{{ data.content_analysis.Summary }}</p>
+                    {% else %}
+                    <p class="content-summary">{{ data.content_analysis }}</p>
+                    {% endif %}
+                </section>
+
+                <button class="toggle-details" onclick="toggleDetails(this)">Click for technical details</button>
+
+                <div class="audit-list">
+                    {% if data.content_analysis is string %}
+                    <p>{{ data.content_analysis }}</p>
+                    {% else %}
+                    <ul class="content-analysis-list">
+                        {% for key, value in data.content_analysis.items() %}
+                        {% if key != "Summary" %}
+                        <li class="content-analysis-item">
+                            <h3 class="content-analysis-title">{{ key }}:</h3>
+                            <p class="content-analysis-value">{{ value }}</p>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </section>
+
+            <h2>Dead Links</h2>
+            <section class="section dead-links-section">
+                {% if data.dead_link_count is string %}
+                <p class="dead-link-count">{{data.dead_link_count}}</p>
+                {% else %}
+                <p class="dead-link-count">There is a total of: <span>{{ data.dead_link_count }}</span> broken links.</p>
+                {% endif %}
+            </section>
+
+
             {% endif %}
         </div>
     </main>
@@ -561,6 +693,8 @@
             "Checking Best Practices...",
             "Validating HTML...",
             "Validating CSS...",
+            "Analyzing Content...",
+            "Checking for Broken Links...",
             "Generating Report..."
         ];
 
