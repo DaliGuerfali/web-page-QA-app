@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Quality Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        header p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        main {
+            margin: 20px auto;
+            max-width: 900px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            max-width: 600px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results h2 {
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 5px;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .section strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .subsection {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .subsection ul {
+            margin: 10px 0;
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        .error {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .audit-list {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .toggle-details {
+            color: #007BFF;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            background: none;
+        }
+
+        .toggle-details:hover {
+            text-decoration: underline;
+        }
+
+        .loading-spinner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007BFF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .log-message {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .total-error-summary {
+            font-size: 18px;
+            color: #d9534f;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .file-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .file-section h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .error-list {
+            padding-left: 20px;
+            list-style-type: disc;
+            margin: 0;
+        }
+
+        .error-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #f5c2c2;
+            border-radius: 4px;
+            background: #ffe6e6;
+        }
+
+        .error-message {
+            font-size: 16px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+
+        .error-description {
+            display: block;
+            font-size: 14px;
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .error-count {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .loading-metrics {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .metric-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-item h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .metric-item p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .category.fast {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .category.average {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .category.slow {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .metric-distributions {
+            margin-top: 15px;
+        }
+
+        .distribution-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .distribution-table th,
+        .distribution-table td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .distribution-table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        .distribution-table td {
+            background-color: #fff;
+        }
+
+        .audit-item {
+            padding: 1rem;
+            background-color: #f9f9f9;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+
+        .audit-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .audit-description {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .audit-displayValue,
+        .audit-numericValue {
+            font-size: 1rem;
+            color: #0077cc;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        .metric-savings {
+            margin-top: 1rem;
+        }
+
+        .metric-savings-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .metric-savings-item {
+            font-size: 0.9rem;
+            color: #444;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #d9534f;
+        }
+
+        .metric-savings strong {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Webpage Quality Checker</h1>
+        <p>Enter a URL to analyze its quality and get feedback.</p>
+    </header>
+    <main>
+        <form method="POST" action="/analyze" id="analyzeForm">
+            <input type="text" name="url" placeholder="Enter URL here..." {% if URL %} value="{{ URL }}" {% endif %}
+                required>
+
+            <button type="submit">Analyze</button>
+        </form>
+
+        <div class="loading-spinner" id="loadingSpinner"></div>
+
+        <div id="logMessages"></div>
+
+        <div class="results" id="resultsSection">
+            {% if data %}
+            <h2>Quality Assurance Report</h2>
+            <section class="section">
+                <h2>Loading Performance Metrics</h2>
+                <div class="loading-metrics">
+                    {% for metric, details in data.loading_section.items() %}
+                    <div class="metric-item">
+                        <h3>{{ metric.replace('_', ' ').title() }}</h3>
+                        <p><strong>Percentile:</strong> {{ details.percentile }}</p>
+                        <p><strong>Category:</strong> <span class="category {{ details.category|lower }}">{{
+                                details.category }}</span></p>
+                        <div class="metric-distributions">
+                            <h4>Distributions:</h4>
+                            <table class="distribution-table">
+                                <thead>
+                                    <tr>
+                                        <th>Range</th>
+                                        <th>Proportion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for distribution in details.distributions %}
+                                    <tr>
+                                        <td>
+                                            {% if distribution.min is defined and distribution.max is defined %}
+                                            {{ distribution.min }} - {{ distribution.max }}
+                                            {% elif distribution.min is defined %}
+                                            {{ distribution.min }}+
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ distribution.proportion * 100 | round(2) }}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% for section in data.psi_sections %}
+            <h2>{{ section.title }}</h2>
+            <section class="section">
+                <section class="subsection">
+                    <strong>Section Summary:</strong>
+                    <p>{{ section.summary }}</p>
+                </section>
+
+                <button class="toggle-details" onclick="toggleDetails(this)">Click for technical details</button>
+
+                <div class="audit-list">
+                    {% if section.audits is string %}
+                    <p>{{ section.audits }}</p>
+                    {% else %}
+                    <ul class="subsection">
+                        {% for audit in section.audits %}
+                        <li class="audit-item">
+                            <strong class="audit-title">{{ audit.title }}:</strong>
+                            {% if audit.description %}
+                            <p class="audit-description">{{ audit.description }}</p>
+                            {% endif %}
+                            {% if audit.displayValue %}
+                            <span class="audit-displayValue">{{ audit.displayValue }}</span>
+                            {% endif %}
+                            {% if audit.numericValue %}
+                            <span class="audit-numericValue">{{ audit.numericValue }}</span>
+                            {% endif %}
+                            {% if audit.metricSavings %}
+                            <div class="metric-savings">
+                                <strong>Metric Savings:</strong>
+                                <ul class="metric-savings-list">
+                                    {% if audit.metricSavings.LCP %}
+                                    <li class="metric-savings-item">LCP: <span class="metric-value">{{
+                                            audit.metricSavings.LCP }}</span></li>
+                                    {% endif %}
+                                    {% if audit.metricSavings.FCP %}
+                                    <li class="metric-savings-item">FCP: <span class="metric-value">{{
+                                            audit.metricSavings.FCP }}</span></li>
+                                    {% endif %}
+                                    {% if audit.metricSavings.FID %}
+                                    <li class="metric-savings-item">FID: <span class="metric-value">{{
+                                            audit.metricSavings.FID }}</span></li>
+                                    {% endif %}
+                                    {% if audit.metricSavings.CLS %}
+                                    <li class="metric-savings-item">CLS: <span class="metric-value">{{
+                                            audit.metricSavings.CLS }}</span></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </li>
+
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </section>
+            {% endfor %}
+            <h2>HTML Validation</h2>
+            <section class="section">
+                <section class="subsection">
+                    <strong>Validation Summary:</strong>
+                    <p>{{ data.html_section.summary }}</p>
+                </section>
+                <button class="toggle-details" onclick="toggleDetails(this)">Click for technical details</button>
+
+
+                <div class="audit-list">
+                    {% if data.html_section.errors is string %}
+                    <p>{{ data.html_section.errors }}</p>
+                    {% else %}
+                    <h3>Errors:</h3>
+                    <ul class="error-list">
+                        {% for error in data.html_section.errors %}
+                        <li class="error-item">
+                            <p class="error-message">{{ error.message }}</p>
+                            {% if error.position %}
+                            <span class="error-description">Position: {{ error.position }}</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </section>
+            <h2>CSS Validation</h2>
+            <section class="section">
+                <section class="subsection">
+                    <strong>Section Summary:</strong>
+                    <p>{{ data.css_section.summary }}</p>
+                </section>
+
+                <button class="toggle-details" onclick="toggleDetails(this)">Click for technical details</button>
+
+                <div class="audit-list">
+                    {% if data.css_section.files is string %}
+                    <p>{{ data.css_section.files }}</p>
+                    {% else %}
+                    <div class="total-error-summary">
+                        <strong>Total Errors on Page: {{ data.css_section.errorCount }}</strong>
+                    </div>
+                    <ul class="subsection">
+                        {% for file in data.css_section.files %}
+                        <li class="file-section">
+                            <h3>
+                                {{ file.fileName }}
+                            </h3>
+                            <ul class="error-list">
+                                {% for e in file.errors %}
+                                <li class="error-item">
+                                    <p class="error-message">{{ e.error }}</p>
+                                    {% if e.description %}
+                                    <span class="error-description">{{ e.description }}</span>
+                                    {% endif %}
+                                    <strong class="error-count">Count: {{ e.count }}</strong>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("analyzeForm").addEventListener("submit", function (event) {
+            document.getElementById("loadingSpinner").style.display = "block";
+
+            document.getElementById("resultsSection").style.display = "none";
+
+            showLogs();
+        });
+
+        const logMessages = [
+            "Evaluating Load Speed...",
+            "Measuring Performance...",
+            "Assessing SEO...",
+            "Analyzing Accessibility...",
+            "Checking Best Practices...",
+            "Validating HTML...",
+            "Validating CSS...",
+            "Generating Report..."
+        ];
+
+
+        function showLogs() {
+            let index = 0;
+            const logContainer = document.getElementById("logMessages");
+
+            function displayLog() {
+                if (index < logMessages.length) {
+                    const logDiv = document.createElement("div");
+                    logDiv.classList.add("log-message");
+                    logDiv.textContent = logMessages[index];
+                    logContainer.appendChild(logDiv);
+
+                    const randomDelay = Math.floor(Math.random() * 3000) + 1000;
+
+                    setTimeout(displayLog, randomDelay);
+                    index++;
+                } else {
+                    const finalDiv = document.createElement("div");
+                    finalDiv.classList.add("log-message");
+                    finalDiv.textContent = "Almost there...";
+                    setTimeout(() => {
+                        logContainer.appendChild(finalDiv);
+                    }, 10000);
+                }
+            }
+
+            displayLog();
+
+        }
+        function toggleDetails(button) {
+            var auditList = button.nextElementSibling;
+            if (auditList.style.display === "none" || auditList.style.display === "") {
+                auditList.style.display = "block";
+                button.textContent = "Hide technical details";
+            } else {
+                auditList.style.display = "none";
+                button.textContent = "Click for technical details";
+            }
+        }
+    </script>
+</body>
+
+</html>
